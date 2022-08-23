@@ -1,0 +1,1 @@
+from prognosclass.prognosclass import prognos
