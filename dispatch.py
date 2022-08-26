@@ -3,7 +3,7 @@ from database import botdb
 
 
 async def mailing(bot):
-    print("mailing")
+
     prognos.create_prognos()
 
     clients = botdb.get_client_chat_id()
