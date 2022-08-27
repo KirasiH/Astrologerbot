@@ -16,7 +16,7 @@ dp = Dispatcher()
 
 async def scheduler():
 
-    aioschedule.every().day.at("19:05").do(mailing, bot)
+    aioschedule.every().day.at("8:00").do(mailing, bot)
 
     while True:
         await aioschedule.run_pending()

@@ -13,7 +13,7 @@ class BotDB:
             status int
         )""")
 
-    def add_client(self, id: int, zs: str):
+    def add_client(self, id, zs):
 
         data = self.cur.execute(f"SELECT id FROM client WHERE id = {id}")
 
@@ -25,7 +25,7 @@ class BotDB:
             self.cur.execute(f"UPDATE client SET Zs = '{zs}', status = {1} WHERE id = {id}")
             self.db.commit()
 
-    def set_status(self, id: int, status: int):
+    def set_status(self, id, status):
 
         self.cur.execute(f"UPDATE client SET status = {status} WHERE id = {id}")
         self.db.commit()
