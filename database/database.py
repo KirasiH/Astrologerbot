@@ -1,38 +1,64 @@
-import sqlite3
+import aiomysql
+import asyncio
+
 
 class BotDB:
 
-    def __init__(self):
+    async def start(self):
 
-        self.db = sqlite3.connect("database.db")
-        self.cur = self.db.cursor()
+        loop = asyncio.get_event_loop()
 
-        self.cur.execute("""CREATE TABLE IF NOT EXISTS client(
-            id INTEGER PRIMARY KEY,
-            Zs TEXT,
-            status int
-        )""")
+        self.conn = await aiomysql.connect(
+            port=3306,
+            host="127.0.0.1",
+            user="root",
+            db="astrolog",
+            password="123456789-zalik",
+            cursorclass=aiomysql.cursors.DictCursor,
+            loop=loop
+        )
 
-    def add_client(self, id: int, zs: str):
 
-        data = self.cur.execute(f"SELECT id FROM client WHERE id = {id}")
+        async with self.conn.cursor() as cur:
+            await cur.execute("""CREATE TABLE IF NOT EXISTS client(
+                id INTEGER PRIMARY KEY,
+                Zs TEXT,
+                status int
+            )""")
 
-        if data.fetchall() == []:
-            self.cur.execute("INSERT INTO client (id, Zs, status) VALUES (?, ?, ?)", (id, zs, 1))
-            self.db.commit()
+            await self.conn.commit()
 
-        else:
-            self.cur.execute(f"UPDATE client SET Zs = '{zs}', status = {1} WHERE id = {id}")
-            self.db.commit()
+    async def add_client(self, id, zs):
 
-    def set_status(self, id: int, status: int):
+        async with self.conn.cursor() as cur:
+            await cur.execute(f"SELECT id FROM client WHERE id = {id}")
 
-        self.cur.execute(f"UPDATE client SET status = {status} WHERE id = {id}")
-        self.db.commit()
+            if await cur.fetchall() == ():
+                await cur.execute("INSERT INTO client (id, Zs, status) VALUES (%s, %s, %s)", (str(id), str(zs), int(1)))
+                await self.conn.commit()
 
-    def get_client_chat_id(self):
+            else:
+                await cur.execute(f"UPDATE client SET Zs = '{zs}', status = {1} WHERE id = {id}")
+                await self.conn.commit()
 
-        for client in self.cur.execute("SELECT id, Zs FROM client WHERE status = 1").fetchall():
-            yield client
+            await cur.close()
+
+
+    async def set_status(self, id, status):
+
+        async with self.conn.cursor() as cur:
+            await cur.execute(f"UPDATE client SET status = {status} WHERE id = {id}")
+            await self.conn.commit()
+            await cur.close()
+
+    async def get_client_chat_id(self):
+
+        async with self.conn.cursor() as cur:
+            await cur.execute("SELECT id, Zs FROM client WHERE status = 1")
+            data = await cur.fetchall()
+            await cur.close()
+            return data
+
 
 botdb = BotDB()
+

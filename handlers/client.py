@@ -1,10 +1,10 @@
 from aiogram import types, Router
 from prognosclass import prognos
 from database import botdb
-from aiogram.dispatcher.fsm.state import State, StatesGroup
-from aiogram.dispatcher.fsm.context import FSMContext
+from aiogram.fsm.state import State, StatesGroup
+from aiogram.fsm.context import FSMContext
 
-from aiogram.dispatcher.filters.chat_member_updated import ChatMemberUpdatedFilter, KICKED
+from aiogram.filters.chat_member_updated import ChatMemberUpdatedFilter, KICKED
 
 
 form_router = Router()
@@ -52,7 +52,7 @@ async def zodiak_sing(message: types.Message, state: FSMContext):
         reply_markup=types.ReplyKeyboardMarkup(keyboard=button, resize_keyboard=True)
     )
 
-    botdb.add_client(id=message.from_user.id, zs=Zs[message.text])
+    await botdb.add_client(id=message.from_user.id, zs=Zs[message.text])
 
 
 async def command_start(message: types.Message):
@@ -62,7 +62,7 @@ async def command_start(message: types.Message):
 
 async def status_client_zero(event: types.ChatMemberUpdated):
     print("delete")
-    botdb.set_status(event.from_user.id, 0)
+    await botdb.set_status(event.from_user.id, 0)
 
 
 async def echo(message):
