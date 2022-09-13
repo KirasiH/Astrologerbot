@@ -24,7 +24,6 @@ async def scheduler():
 
 
 async def main():
-
     dp.include_router(register_client())
 
     prognos.create_prognos()
