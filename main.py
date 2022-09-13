@@ -3,7 +3,6 @@ from handlers import register_client
 from prognosclass import prognos
 from dispatch import mailing
 from dotenv import load_dotenv, find_dotenv
-from database import botdb
 import aioschedule
 import logging
 import asyncio
@@ -17,7 +16,7 @@ dp = Dispatcher()
 
 async def scheduler():
 
-    aioschedule.every().day.at("17:35").do(mailing, bot)
+    aioschedule.every().day.at("19:05").do(mailing, bot)
 
     while True:
         await aioschedule.run_pending()
@@ -25,8 +24,6 @@ async def scheduler():
 
 
 async def main():
-
-    await botdb.start()
 
     dp.include_router(register_client())
 
