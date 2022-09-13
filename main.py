@@ -13,7 +13,6 @@ load_dotenv(find_dotenv())
 bot = Bot(os.getenv("TOKEN"))
 dp = Dispatcher()
 
-
 async def scheduler():
 
     aioschedule.every().day.at("19:05").do(mailing, bot)
